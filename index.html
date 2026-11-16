@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f8fd1">
+<meta name="description" content="Nada (ندى) — a bilingual, non-medical companion for people living with Sjögren's syndrome. Track dryness symptoms, log medications, learn, and share a summary with your care team.">
+<title>Nada · ندى — Sjögren's Companion</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+:root{
+  --bg:#0b1620; --card:#121f2b; --card2:#182a39; --line:#223344; --txt:#eaf2f8; --muted:#8fa6ba;
+  --accent:#2f8fd1; --accent2:#5fd0c0; --good:#2e9e6b; --warn:#e0a23d; --bad:#d9594a; --radius:16px;
+}
+html[data-theme="light"]{--bg:#f3f8fb;--card:#ffffff;--card2:#eef5fa;--line:#dce8ef;--txt:#15222c;--muted:#5b7183;--accent:#1f7fc1;--accent2:#1fae9c;}
+html[data-theme="mint"]{--bg:#0c1a16;--card:#122922;--card2:#17352c;--line:#20463a;--txt:#e9f7f1;--muted:#8db8a9;--accent:#2bb38a;--accent2:#58c7c0;}
+html[data-theme="lavender"]{--bg:#161320;--card:#201c2f;--card2:#2a2440;--line:#3a3252;--txt:#f1edfb;--muted:#a79bc4;--accent:#8a6fd8;--accent2:#c08fe0;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif;transition:background .2s,color .2s}
+.app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column}
+.topbar{position:sticky;top:0;z-index:5;background:var(--bg);padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
+.brandmark{width:30px;height:30px;flex:none;color:var(--accent)}
+.brand{font-weight:800;font-size:18px;letter-spacing:.2px}
+.sub{font-size:11px;color:var(--muted);margin-top:-2px}
+.topbar .spacer{margin-inline-start:auto}
+#screens{flex:1;overflow:auto;padding:14px;padding-bottom:96px;-webkit-overflow-scrolling:touch}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.card.soft{background:var(--card2)}
+h1,h2,h3{margin:0 0 8px}
+h2{font-size:16px}
+.muted{color:var(--muted);font-size:13px;line-height:1.5}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.wrap{flex-wrap:wrap}
+.btn{appearance:none;border:0;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer;font-size:14px;font-family:inherit}
+.btn-primary{background:var(--accent);color:#fff;width:100%}
+.btn-primary:active{opacity:.85}
+.btn-ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+.btn-sm{padding:8px 12px;font-size:12px;border-radius:10px}
+.btn-icon{background:transparent;border:0;color:var(--txt);cursor:pointer;padding:6px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.btn-icon:active{background:var(--line)}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);color:var(--txt);background:transparent;border-radius:999px;padding:7px 12px;font-size:12.5px;cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.pbar{height:8px;border-radius:999px;background:var(--line);overflow:hidden}
+.pbar>i{display:block;height:100%;background:var(--accent);border-radius:999px}
+.scale{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0 4px}
+.scale button{flex:1;min-width:26px;padding:10px 0;border:1px solid var(--line);background:transparent;color:var(--txt);border-radius:10px;cursor:pointer;font-size:12.5px;font-family:inherit}
+.scale button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.scalelabels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:2px}
+.tabbar{position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;display:flex;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.tabbar.hidden{display:none}
+.tab{flex:1;background:none;border:0;color:var(--muted);padding:9px 0 8px;font-size:10.5px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;font-family:inherit}
+.tab.on{color:var(--accent)}
+.disc{font-size:11px;color:var(--muted);line-height:1.5;padding:4px 2px}
+.kpi{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.kpi .stat{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px}
+.kpi .num{font-size:22px;font-weight:800}
+.kpi .lbl{font-size:11px;color:var(--muted);margin-top:2px}
+.tile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px 6px;text-align:center;cursor:pointer;color:var(--txt);font-size:12px}
+.tile svg{color:var(--accent);margin-bottom:6px}
+.sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:30}
+.sheet-backdrop.hidden{display:none}
+.sheet{background:var(--bg);width:100%;max-width:480px;border-radius:18px 18px 0 0;padding:18px;max-height:88vh;overflow:auto;border-top:1px solid var(--line)}
+.sheet-handle{width:40px;height:4px;background:var(--line);border-radius:4px;margin:0 auto 14px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px}
+.field input,.field select{width:100%;background:var(--card2);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit}
+.listitem{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.listitem:last-child{border-bottom:0}
+.badge{font-size:10.5px;padding:3px 8px;border-radius:999px;background:var(--card2);color:var(--muted)}
+.badge.good{color:var(--good)}
+.badge.warn{color:var(--warn)}
+.accordion summary{cursor:pointer;font-weight:700;padding:4px 0;list-style:none}
+.accordion summary::-webkit-details-marker{display:none}
+.accordion summary::before{content:'›';display:inline-block;margin-inline-end:8px;transition:transform .15s}
+details[open] summary::before{transform:rotate(90deg)}
+.accordion p{color:var(--muted);font-size:13.5px;line-height:1.6;margin:8px 0 2px}
+a{color:var(--accent)}
+.toast{position:fixed;bottom:86px;left:50%;transform:translateX(-50%);background:var(--card2);border:1px solid var(--line);color:var(--txt);padding:10px 16px;border-radius:12px;font-size:13px;z-index:40;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+canvas{max-width:100%}
+.segmented{display:flex;background:var(--card2);border-radius:10px;padding:3px;gap:3px}
+.segmented button{flex:1;background:none;border:0;color:var(--muted);padding:7px 0;border-radius:8px;font-size:12px;font-family:inherit;cursor:pointer}
+.segmented button.on{background:var(--accent);color:#fff}
+:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+@media (prefers-reduced-motion: reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+<div class="app" id="appRoot">
+  <div class="topbar">
+    <svg class="brandmark" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2c3.5 5 7 8.5 7 13a7 7 0 1 1-14 0c0-4.5 3.5-8 7-13z" fill="currentColor" opacity=".9"/></svg>
+    <div><div class="brand" id="brandTxt">Nada</div><div class="sub" id="subTxt">Sjögren's companion</div></div>
+    <div class="spacer"></div>
+    <button class="btn-icon" onclick="toggleLang()" id="langBtn" aria-label="Toggle language">AR</button>
+  </div>
+  <main id="screens" role="main"></main>
+  <nav class="tabbar" id="tabbar" role="tablist"></nav>
+</div>
+<div class="sheet-backdrop hidden" id="sheetBackdrop" onclick="if(event.target===this)closeSheet()">
+  <div class="sheet" id="sheetBody" role="dialog" aria-modal="true"><div class="sheet-handle"></div><div id="sheetContent"></div></div>
+</div>
+<div id="toastHost"></div>
+
+<script>
+/* =========================================================================
+   NADA (ندى) — a bilingual, non-medical companion for Sjögren's syndrome.
+   Single-file PWA. Educational / descriptive only — never diagnoses,
+   predicts flares, or recommends treatment/doses. See DISCLAIMER text.
+   ========================================================================= */
+
+/* ---------------- state (additive-safe) ---------------- */
+const KEY='nada_sjogrens_v1';
+function blank(){return{
+  lang:null, onboarded:false, theme:'dark',
+  user:{name:''},
+  logs:[],            // daily symptom entries: {id,t,type:'daily',dryEye,dryMouth,jointPain,fatigue,triggers:[],note}
+  esspriHistory:[],   // {id,t,dryness,fatigue,pain,score}
+  meds:[],            // {id,name,type,schedule,active}
+};}
+function load(){try{const v=JSON.parse(localStorage.getItem(KEY));return v?Object.assign(blank(),v):seedDemo(blank());}catch(e){return blank();}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+let S=load();
+window.getState=()=>S; // debug/testing hook only — the UI never relies on this
+const rid=()=>Math.random().toString(36).slice(2,9);
+const todayKey=()=>new Date().toISOString().slice(0,10);
+window.rid=rid;window.todayKey=todayKey;
+function lastNDays(n){const a=[];for(let i=n-1;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);a.push(d.toISOString().slice(0,10));}return a;}
+function daysAgo(dateStr){return Math.round((Date.now()-new Date(dateStr+'T00:00'))/864e5);}
+function dailyOn(d){return S.logs.find(l=>l.type==='daily'&&l.t.slice(0,10)===d);}
+function upsertDaily(fields){const d=todayKey();let e=dailyOn(d);
+  if(e){Object.assign(e,fields);}else{e={id:rid(),t:new Date().toISOString(),type:'daily',dryEye:null,dryMouth:null,jointPain:null,fatigue:null,triggers:[],note:'',...fields};S.logs.push(e);}
+  save();return e;}
+function addEsspri(o){const e={id:rid(),t:new Date().toISOString(),dryness:o.dryness,fatigue:o.fatigue,pain:o.pain,
+  score:Math.round(((o.dryness+o.fatigue+o.pain)/3)*10)/10};S.esspriHistory.push(e);save();return e;}
+function addMed(o){S.meds.push({id:rid(),name:o.name,type:o.type,schedule:o.schedule,active:true});save();}
+function removeMed(id){S.meds=S.meds.filter(m=>m.id!==id);save();}
+function medTakenToday(id){return S.logs.some(l=>l.type==='medTaken'&&l.medId===id&&l.t.slice(0,10)===todayKey());}
+function toggleMedTaken(id){const d=todayKey();const i=S.logs.findIndex(l=>l.type==='medTaken'&&l.medId===id&&l.t.slice(0,10)===d);
+  if(i>=0){S.logs.splice(i,1);}else{S.logs.push({id:rid(),t:new Date().toISOString(),type:'medTaken',medId:id});}save();}
+
+function seedDemo(b){
+  for(let i=20;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().slice(0,10);
+    if(Math.random()<0.78){
+      b.logs.push({id:rid(),t:ds+'T09:00:00.000Z',type:'daily',
+        dryEye:3+Math.round(Math.random()*4),dryMouth:3+Math.round(Math.random()*4),
+        jointPain:1+Math.round(Math.random()*4),fatigue:2+Math.round(Math.random()*5),
+        triggers: Math.random()<0.4?['wind','screens']:[], note:''});
+    }
+  }
+  b.esspriHistory=[0,7,14].map(i=>{const d=new Date();d.setDate(d.getDate()-i);
+    return {id:rid(),t:d.toISOString(),dryness:6,fatigue:5,pain:3,score:4.7};});
+  b.meds=[{id:rid(),name:'Artificial tears',type:'eyeDrops',schedule:{en:'4× daily',ar:'٤ مرات يوميًا'},active:true},
+    {id:rid(),name:'Sugar-free lozenges',type:'other',schedule:{en:'As needed',ar:'عند الحاجة'},active:true}];
+  return b;
+}
+
+/* ---------------- i18n + RTL ---------------- */
+const I18N={
+  brand:{en:'Nada',ar:'ندى'}, tagline:{en:"Sjögren's companion",ar:'رفيقك مع متلازمة شوغرن'},
+  today:{en:'Today',ar:'اليوم'}, track:{en:'Track',ar:'السجل'}, reports:{en:'Reports',ar:'التقارير'},
+  learn:{en:'Learn',ar:'تعلّم'}, more:{en:'More',ar:'المزيد'}, back:{en:'Back',ar:'رجوع'},
+  save:{en:'Save',ar:'حفظ'}, cancel:{en:'Cancel',ar:'إلغاء'}, close:{en:'Close',ar:'إغلاق'},
+  logged:{en:'Saved',ar:'تم الحفظ'}, delete:{en:'Delete',ar:'حذف'}, add:{en:'Add',ar:'إضافة'},
+
+  welcome:{en:'Welcome to Nada',ar:'مرحبًا بك في ندى'},
+  welcomeSub:{en:"A private, on-device companion for living with Sjögren's syndrome.",ar:'رفيق خاص يعمل على جهازك للتعايش مع متلازمة شوغرن.'},
+  chooseLang:{en:'Choose your language',ar:'اختر لغتك'},
+  continueBtn:{en:'Continue',ar:'استمرار'},
+  nameOptional:{en:'Your name (optional)',ar:'اسمك (اختياري)'},
+  nameHint:{en:'Stored only on this device, never uploaded.',ar:'يُحفظ على هذا الجهاز فقط ولا يُرفع إلى أي خادم.'},
+  getStarted:{en:'Get started',ar:'بدء الاستخدام'},
+
+  helloName:{en:'Hi',ar:'مرحبًا'},
+  todayIntro:{en:'A quick check-in takes under a minute.',ar:'تسجيل سريع يستغرق أقل من دقيقة.'},
+  quickLog:{en:"Today's symptoms",ar:'أعراض اليوم'},
+  notLoggedToday:{en:"You haven't logged today yet.",ar:'لم تسجّل أعراض اليوم بعد.'},
+  loggedToday:{en:'Logged for today',ar:'تم تسجيل اليوم'},
+  editToday:{en:'Edit',ar:'تعديل'},
+  logNow:{en:'Log now',ar:'سجّل الآن'},
+  streak:{en:'day streak',ar:'يومًا متتاليًا'},
+  quickActions:{en:'Quick actions',ar:'إجراءات سريعة'},
+  myMeds:{en:'My medications',ar:'أدويتي'},
+  esspriCheckin:{en:'Weekly check-in (ESSPRI)',ar:'تسجيل أسبوعي (ESSPRI)'},
+  esspriDue:{en:'Due this week',ar:'مطلوب هذا الأسبوع'},
+  esspriDone:{en:'Done this week',ar:'تم هذا الأسبوع'},
+
+  dryEye:{en:'Dry eyes',ar:'جفاف العين'}, dryMouth:{en:'Dry mouth',ar:'جفاف الفم'},
+  jointPain:{en:'Joint / muscle pain',ar:'ألم المفاصل / العضلات'}, fatigue:{en:'Fatigue',ar:'التعب'},
+  rateToday:{en:'Rate each symptom today (0 = none, 10 = worst)',ar:'قيّم كل عرض اليوم (٠ = لا شيء، ١٠ = الأسوأ)'},
+  triggersQ:{en:'Anything around today that might be linked? (optional)',ar:'هل هناك شيء اليوم قد يكون له علاقة؟ (اختياري)'},
+  triggerAssoc:{en:'These are self-reported associations, not causes.',ar:'هذه ملاحظات ترابط ذاتية، وليست أسبابًا مؤكدة.'},
+  noteOptional:{en:'Note (optional)',ar:'ملاحظة (اختياري)'},
+  trigWind:{en:'Wind / dry air',ar:'رياح / جو جاف'}, trigAC:{en:'AC or heating',ar:'تكييف أو تدفئة'},
+  trigScreens:{en:'Long screen time',ar:'وقت شاشة طويل'}, trigTravel:{en:'Air travel',ar:'سفر جوي'},
+  trigStress:{en:'Stress',ar:'ضغط نفسي'}, trigSleep:{en:'Poor sleep',ar:'نوم غير كافٍ'},
+  trigSmoke:{en:'Smoke / dust',ar:'دخان / غبار'}, trigAlcohol:{en:'Alcohol',ar:'كحول'},
+
+  esspriIntro:{en:"ESSPRI is a validated 3-item questionnaire people with Sjögren's use to report dryness, fatigue, and pain. There is no pass/fail score — it's a number to track over time and share with your team.",ar:'استبيان ESSPRI أداة مُعتمدة من ثلاثة أسئلة يستخدمها مرضى متلازمة شوغرن لتسجيل الجفاف والتعب والألم. لا توجد نتيجة ناجحة أو فاشلة — إنه رقم تتابعه مع الوقت وتشاركه مع فريق رعايتك.'},
+  esspriDrynessQ:{en:'Overall dryness (0–10)',ar:'الجفاف بشكل عام (٠–١٠)'},
+  esspriFatigueQ:{en:'Overall fatigue (0–10)',ar:'التعب بشكل عام (٠–١٠)'},
+  esspriPainQ:{en:'Overall pain (0–10)',ar:'الألم بشكل عام (٠–١٠)'},
+  esspriScore:{en:'ESSPRI score',ar:'نتيجة ESSPRI'},
+  esspriHistoryTitle:{en:'Check-in history',ar:'سجل التسجيلات'},
+  pickAll:{en:'Please rate all three before saving.',ar:'يرجى تقييم الثلاثة جميعًا قبل الحفظ.'},
+
+  addMedBtn:{en:'Add medication',ar:'إضافة دواء'},
+  medName:{en:'Name',ar:'الاسم'}, medType:{en:'Type',ar:'النوع'}, medSchedule:{en:'Schedule (free text)',ar:'الجدول (نص حر)'},
+  medTypeEye:{en:'Eye drops / gel',ar:'قطرات / جل للعين'}, medTypeSaliva:{en:'Saliva stimulant',ar:'منشّط للعاب'},
+  medTypeDMARD:{en:'Disease-modifying medicine',ar:'علاج مُعدِّل للمرض'}, medTypeOther:{en:'Other',ar:'أخرى'},
+  takenToday:{en:'Taken today',ar:'تم تناوله اليوم'}, noMeds:{en:'No medications added yet.',ar:'لم تُضف أدوية بعد.'},
+  medRecordNote:{en:'Nada only records what you tell it — it never suggests doses or changes.',ar:'يسجّل ندى ما تُدخله فقط — ولا يقترح جرعات أو تغييرات أبدًا.'},
+
+  reportsTitle:{en:'Your trends',ar:'اتجاهاتك'},
+  period7:{en:'7d',ar:'٧ يوم'}, period30:{en:'30d',ar:'٣٠ يوم'}, period90:{en:'90d',ar:'٩٠ يوم'},
+  entriesLogged:{en:'Entries logged',ar:'عدد الإدخالات'}, daysLogged:{en:'% days logged',ar:'٪ الأيام المسجّلة'},
+  typicalRange:{en:'Typical range',ar:'المدى الطبيعي لك'}, typicalHint:{en:'Shaded band = your mean ± 1 SD, not a clinical threshold.',ar:'النطاق المظلّل = متوسطك ± انحراف معياري واحد، وليس حدًا طبيًا.'},
+  symptomTrend:{en:'Symptom trend',ar:'اتجاه الأعراض'}, esspriTrend:{en:'ESSPRI trend',ar:'اتجاه ESSPRI'},
+  medAdherence:{en:'Medication log',ar:'سجل الأدوية'}, noDataYet:{en:'Log a few days to see your trends here.',ar:'سجّل بعض الأيام لرؤية اتجاهاتك هنا.'},
+  buildReport:{en:'Build clinician summary',ar:'إنشاء ملخّص للطبيب'},
+  shareReport:{en:'Share / print summary',ar:'مشاركة / طباعة الملخّص'},
+  reportHint:{en:'Opens a printable, read-only summary — nothing is uploaded unless you choose to share the link.',ar:'يفتح ملخصًا قابلًا للطباعة فقط للقراءة — لا يُرفع أي شيء إلا إذا اخترت مشاركة الرابط.'},
+
+  learnTitle:{en:"Learn about Sjögren's",ar:'تعرّف على متلازمة شوغرن'},
+  art1T:{en:"What is Sjögren's syndrome?",ar:'ما هي متلازمة شوغرن؟'},
+  art1B:{en:"Sjögren's syndrome is a long-term autoimmune condition where the immune system affects glands that make moisture, most often causing dry eyes and dry mouth. It can also involve joints, skin, and fatigue. Severity and symptoms vary widely between people. This app helps you track your own experience — it does not diagnose or stage the condition.",ar:'متلازمة شوغرن هي حالة مناعية مزمنة يؤثر فيها الجهاز المناعي على الغدد المسؤولة عن إنتاج الرطوبة، وغالبًا ما تُسبب جفاف العين والفم، وقد تشمل أيضًا المفاصل والجلد والتعب. تختلف الأعراض وشدّتها كثيرًا بين الأشخاص. يساعدك هذا التطبيق على تتبّع تجربتك الخاصة فقط — ولا يقوم بتشخيص الحالة أو تحديد مرحلتها.'},
+  art2T:{en:'Caring for dry eyes',ar:'العناية بجفاف العين'},
+  art2B:{en:'Common educational tips many patients find helpful: use preservative-free artificial tears regularly rather than only when eyes feel dry; run a humidifier, especially at night; take screen breaks (look 20 ft away for 20 seconds every 20 minutes); wear wrap-around sunglasses outdoors and avoid direct air vents or fans blowing toward your face. Ask your eye doctor about punctal plugs or other options for you.',ar:'من النصائح التثقيفية الشائعة التي يجدها كثير من المرضى مفيدة: استخدام قطرات ترطيب خالية من المواد الحافظة بانتظام لا فقط عند الشعور بالجفاف، وتشغيل جهاز ترطيب الهواء خصوصًا ليلًا، وأخذ فترات راحة من الشاشات (النظر إلى شيء بعيد لمدة ٢٠ ثانية كل ٢٠ دقيقة)، وارتداء نظارات شمسية واسعة في الخارج، وتجنّب تيارات الهواء المباشرة على الوجه. اسأل طبيب العيون عن سدادات القناة الدمعية أو خيارات أخرى تناسب حالتك.'},
+  art3T:{en:'Caring for dry mouth & teeth',ar:'العناية بجفاف الفم والأسنان'},
+  art3B:{en:'Sipping water through the day, chewing sugar-free (xylitol) gum or lozenges, and using a fluoride toothpaste or rinse can help. Because dry mouth raises the risk of cavities, more frequent dental check-ups are often recommended — ask your dentist how often is right for you. Avoid alcohol-based mouthwash, which can worsen dryness.',ar:'يساعد تناول رشفات ماء على مدار اليوم، ومضغ علكة أو مصّ أقراص خالية من السكر (تحتوي على إكسيليتول)، واستخدام معجون أو غسول يحتوي على الفلورايد. ولأن جفاف الفم يزيد خطر التسوس، يُنصح غالبًا بزيارات أكثر لطبيب الأسنان — اسأل طبيبك عن المعدّل المناسب لك. تجنّب غسولات الفم التي تحتوي على كحول لأنها قد تزيد الجفاف.'},
+  art4T:{en:'Joint pain & fatigue — lifestyle tips',ar:'ألم المفاصل والتعب — نصائح لنمط الحياة'},
+  art4B:{en:'Pacing activity across the day, gentle regular movement (walking, swimming, stretching), warm compresses for stiff joints, and consistent sleep habits are commonly reported as helpful for energy and comfort. These are general, educational tips — discuss any new, worsening, or severe pain with your care team rather than self-treating.',ar:'يُذكر كثيرًا أن تنظيم النشاط على مدار اليوم، والحركة المنتظمة الخفيفة (مشي، سباحة، تمارين إطالة)، والكمادات الدافئة للمفاصل المتيبسة، وعادات نوم ثابتة يمكن أن تساعد على الطاقة والراحة. هذه نصائح تثقيفية عامة — ناقش أي ألم جديد أو متزايد أو شديد مع فريق رعايتك بدل العلاج الذاتي.'},
+  art5T:{en:'Possible triggers — association, not cause',ar:'محفّزات محتملة — ترابط لا سببية'},
+  art5B:{en:'Many people notice their symptoms feel different around wind, dry heat/AC, long screen sessions, travel, stress, or poor sleep. Tracking these alongside your symptoms (in Track) can reveal your own patterns over time. A pattern is a descriptive association, not proof of cause — use it as a conversation starter with your care team, not a rule.',ar:'يلاحظ كثير من الأشخاص أن أعراضهم تتغيّر مع الرياح أو الجو الحار الجاف/التكييف أو الجلسات الطويلة أمام الشاشة أو السفر أو الضغط النفسي أو قلة النوم. تتبّع هذه العوامل مع أعراضك (في صفحة السجل) قد يكشف أنماطًا خاصة بك مع الوقت. النمط هو ترابط وصفي لا دليل سببية — استخدمه كنقطة انطلاق للحديث مع فريق رعايتك، لا كقاعدة ثابتة.'},
+  art6T:{en:'When to seek urgent care',ar:'متى تطلب رعاية عاجلة'},
+  art6B:{en:'Seek urgent medical attention for: sudden vision loss or severe eye pain; a painful, swollen salivary or parotid gland with high fever; new numbness, weakness, or difficulty speaking; a widespread rash or purple spots (purpura); or severe difficulty swallowing or breathing. This list is educational, not a diagnostic tool — if in doubt, contact your care team or emergency services.',ar:'اطلب رعاية طبية عاجلة في حال: فقدان مفاجئ للرؤية أو ألم شديد في العين، أو تورّم مؤلم في الغدد اللعابية أو النكفية مع حرارة مرتفعة، أو خدر أو ضعف جديد أو صعوبة في الكلام، أو طفح جلدي واسع أو بقع أرجوانية (فرفرية)، أو صعوبة شديدة في البلع أو التنفس. هذه القائمة تثقيفية وليست أداة تشخيص — في حال الشك، تواصل مع فريق رعايتك أو جهات الطوارئ.'},
+
+  settings:{en:'Settings',ar:'الإعدادات'}, language:{en:'Language',ar:'اللغة'}, theme:{en:'Theme',ar:'المظهر'},
+  themeDark:{en:'Dew (dark)',ar:'ندى (داكن)'}, themeLight:{en:'Light',ar:'فاتح'}, themeMint:{en:'Mint',ar:'نعناعي'}, themeLavender:{en:'Lavender',ar:'لافندر'},
+  dataMgmt:{en:'Your data',ar:'بياناتك'}, exportData:{en:'Export my data (JSON)',ar:'تصدير بياناتي (JSON)'},
+  importData:{en:'Import data',ar:'استيراد بيانات'}, clearData:{en:'Clear all data',ar:'حذف جميع البيانات'},
+  clearConfirm:{en:'This permanently deletes everything saved on this device. Continue?',ar:'سيؤدي هذا إلى حذف كل ما هو محفوظ على هذا الجهاز بشكل نهائي. هل تريد الاستمرار؟'},
+  about:{en:'About Nada',ar:'عن ندى'},
+  aboutBody:{en:"Nada (ندى — Arabic for \"dew\") is an independent, educational companion for people living with Sjögren's syndrome. All data stays on your device unless you explicitly export or share it.",ar:'ندى هو رفيق تثقيفي مستقل لمرضى متلازمة شوغرن. تبقى جميع بياناتك على جهازك ولا تُشارك إلا إذا اخترت ذلك بنفسك.'},
+  disclaimerTitle:{en:'Disclaimer',ar:'إشعار مهم'},
+  disclaimer:{en:"Nada is an educational companion for people living with Sjögren's syndrome. It does not diagnose, predict flares, or recommend treatment or medication doses. Always discuss symptoms, test results, and treatment decisions with your care team.",ar:'ندى رفيق تثقيفي لمرضى متلازمة شوغرن. لا يقوم بالتشخيص أو التنبؤ بالنوبات أو التوصية بعلاج أو جرعات أدوية. يُرجى دائمًا مناقشة الأعراض ونتائج الفحوصات والقرارات العلاجية مع فريق رعايتك الصحية.'},
+  version:{en:'Version 1.0 · Local-only',ar:'الإصدار ١.٠ · محليًا فقط'},
+};
+function isAr(){return S.lang==='ar';}
+function t(k){const e=I18N[k];return e?(isAr()?e.ar:e.en):k;}
+function L(o){if(!o)return'';return isAr()?o.ar:o.en;}
+function applyDir(){document.documentElement.lang=S.lang||'en';document.documentElement.dir=isAr()?'rtl':'ltr';
+  document.documentElement.setAttribute('data-theme',S.theme||'dark');
+  document.getElementById('brandTxt').textContent=t('brand');document.getElementById('subTxt').textContent=t('tagline');
+  document.getElementById('langBtn').textContent=isAr()?'EN':'AR';}
+function toggleLang(){S.lang=isAr()?'en':'ar';save();render();}
+function setTheme(th){S.theme=th;save();render();}
+
+/* ---------------- icons ---------------- */
+const ICONS={
+  home:'<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h14v-9.5"/>',
+  track:'<path d="M9 11l3 3 7-7"/><rect x="3" y="4" width="18" height="16" rx="2"/>',
+  chart:'<path d="M4 19V9"/><path d="M11 19V5"/><path d="M18 19v-7"/>',
+  book:'<path d="M4 5a2 2 0 0 1 2-2h11v17H6a2 2 0 0 1-2-2V5z"/><path d="M8 7h6"/><path d="M8 11h6"/>',
+  more:'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
+  drop:'<path d="M12 2c3.5 5 7 8.5 7 13a7 7 0 1 1-14 0c0-4.5 3.5-8 7-13z"/>',
+  pill:'<rect x="3" y="11" width="18" height="7" rx="3.5" transform="rotate(-30 12 14.5)"/><path d="M8.5 15.5l7-4"/>',
+  plus:'<path d="M12 5v14"/><path d="M5 12h14"/>',
+  back:'<path d="M15 19l-7-7 7-7"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>',
+  share:'<circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8.2 10.8l7.6-4.4"/><path d="M8.2 13.2l7.6 4.4"/>',
+  download:'<path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M5 20h14"/>',
+  upload:'<path d="M12 21V9"/><path d="M7 13l5-5 5 5"/><path d="M5 4h14"/>',
+  trash:'<path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><circle cx="12" cy="8" r=".3" fill="currentColor"/>',
+  chevron:'<path d="M9 6l6 6-6 6"/>',
+  flame:'<path d="M12 2c2 3-1 4-1 7a3 3 0 0 0 6 0c1 2 1 4 1 5a7 7 0 1 1-14 0c0-5 4-7 8-12z"/>',
+};
+function svgIcon(n,s=22,cls=''){const p=ICONS[n];return p?`<svg class="${cls}" viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`:'';}
+
+/* ---------------- small render helpers ---------------- */
+function card(html,cls=''){return `<div class="card ${cls}">${html}</div>`;}
+function topbarTitle(title){return `<div class="row" style="margin-bottom:14px"><button class="btn-icon" onclick="goBack()" aria-label="${t('back')}">${svgIcon('back',22)}</button><h1 style="font-size:18px;margin:0">${title}</h1></div>`;}
+function scaleSel(id,n,val){let h=`<div class="scale" id="${id}" data-val="${val==null?'':val}">`;
+  for(let i=0;i<=n;i++)h+=`<button data-v="${i}" class="${val===i?'on':''}" onclick="pickScale('${id}',${i})" type="button">${i}</button>`;
+  return h+'</div>';}
+function pickScale(id,v){const w=document.getElementById(id);if(!w)return;[...w.children].forEach(b=>b.classList.remove('on'));
+  const b=w.querySelector(`[data-v="${v}"]`);if(b)b.classList.add('on');w.dataset.val=v;}
+function getScale(id){const w=document.getElementById(id);return w&&w.dataset.val!==''&&w.dataset.val!==undefined?+w.dataset.val:null;}
+function chip(label,on,onclick){return `<button type="button" class="chip ${on?'on':''}" onclick="${onclick}">${label}</button>`;}
+function toast(msg){const host=document.getElementById('toastHost');const d=document.createElement('div');d.className='toast';d.textContent=msg;host.appendChild(d);
+  setTimeout(()=>d.remove(),1800);}
+function openSheet(html){document.getElementById('sheetContent').innerHTML=html;document.getElementById('sheetBackdrop').classList.remove('hidden');}
+function closeSheet(){document.getElementById('sheetBackdrop').classList.add('hidden');document.getElementById('sheetContent').innerHTML='';}
+
+/* ---------------- router ---------------- */
+const ROUTES={};let CURRENT='onboard',CURRENT_OPTS={},STACK=[];
+window.getCurrent=()=>CURRENT; // debug/testing hook only — the UI never relies on this
+function route(n,fn){ROUTES[n]=fn;}
+function go(n,opts){opts=opts||{};if(!opts.replace&&CURRENT&&CURRENT!==n)STACK.push({n:CURRENT,o:CURRENT_OPTS});
+  CURRENT=n;CURRENT_OPTS=opts;render();}
+function goBack(){if(STACK.length){const p=STACK.pop();CURRENT=p.n;CURRENT_OPTS=p.o;render();}else{navTab('today');}}
+const MAIN_TABS=['today','track','reports','learn','more'];
+function navTab(n){STACK=[];CURRENT=n;CURRENT_OPTS={};render();}
+function render(){applyDir();
+  const host=document.getElementById('screens');host.innerHTML='';
+  const node=document.createElement('div');node.className='screen';
+  (ROUTES[CURRENT]||ROUTES.today)(node,CURRENT_OPTS);
+  host.appendChild(node);
+  const showTabs=MAIN_TABS.includes(CURRENT)&&S.onboarded;
+  document.getElementById('tabbar').classList.toggle('hidden',!showTabs);
+  if(showTabs){
+    const items=[['today','home'],['track','track'],['reports','chart'],['learn','book'],['more','more']];
+    document.getElementById('tabbar').innerHTML=items.map(([k,ic])=>
+      `<button class="tab ${CURRENT===k?'on':''}" role="tab" aria-selected="${CURRENT===k}" onclick="navTab('${k}')">${svgIcon(ic,21)}<span>${t(k)}</span></button>`).join('');
+  }
+  document.querySelector('.topbar').style.display=(CURRENT==='onboard')?'none':'flex';
+  window.scrollTo(0,0);
+}
+
+/* ======================= ONBOARDING ======================= */
+route('onboard',(n)=>{
+  if(!S.lang)S.lang='en';
+  n.innerHTML=`
+  <div style="padding-top:10vh;text-align:center">
+    <svg viewBox="0 0 24 24" width="56" height="56" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:10px"><path d="M12 2c3.5 5 7 8.5 7 13a7 7 0 1 1-14 0c0-4.5 3.5-8 7-13z" fill="var(--accent)" opacity=".9"/></svg>
+    <h1 style="font-size:22px">${t('welcome')}</h1>
+    <p class="muted" style="padding:0 10px">${t('welcomeSub')}</p>
+  </div>
+  ${card(`<div class="muted" style="margin-bottom:10px;font-weight:700;color:var(--txt)">${t('chooseLang')}</div>
+    <div class="segmented"><button class="${S.lang==='en'?'on':''}" onclick="S.lang='en';render()">English</button>
+    <button class="${S.lang==='ar'?'on':''}" onclick="S.lang='ar';render()">العربية</button></div>`)}
+  ${card(`<div class="field"><label>${t('nameOptional')}</label><input id="obName" value="${S.user.name||''}" placeholder="${isAr()?'اسمك':'Your name'}"></div>
+    <div class="muted">${t('nameHint')}</div>`)}
+  <button class="btn btn-primary" onclick="finishOnboard()">${t('getStarted')}</button>
+  <p class="disc" style="text-align:center;margin-top:10px">${t('disclaimer')}</p>`;
+});
+window.finishOnboard=()=>{S.user.name=(document.getElementById('obName')||{}).value||'';S.onboarded=true;save();navTab('today');};
+
+/* ======================= TODAY ======================= */
+route('today',(n)=>{
+  const d=todayKey();const e=dailyOn(d);
+  let streak=0;{let cur=new Date();for(;;){const ds=cur.toISOString().slice(0,10);if(dailyOn(ds)){streak++;cur.setDate(cur.getDate()-1);}else break;}}
+  const weekHasEsspri=S.esspriHistory.some(h=>daysAgo(h.t.slice(0,10))<7);
+  n.innerHTML=
+   card(`<div class="row between"><div><h2 style="margin-bottom:2px">${t('helloName')}${S.user.name?', '+S.user.name:''}</h2>
+     <div class="muted">${t('todayIntro')}</div></div>${streak>0?`<div class="row" style="gap:4px;color:var(--warn)">${svgIcon('flame',20)}<b>${streak}</b></div>`:''}</div>`)
+   +card(`<div class="row between" style="margin-bottom:8px"><h2 style="margin:0">${t('quickLog')}</h2>
+     <span class="badge ${e?'good':''}">${e?t('loggedToday'):t('notLoggedToday')}</span></div>
+     ${e?symptomSummaryMini(e):''}
+     <button class="btn btn-primary" style="margin-top:10px" onclick="go('logDaily')">${e?t('editToday'):t('logNow')}</button>`)
+   +card(`<div class="row between" style="margin-bottom:4px"><h2 style="margin:0">${t('esspriCheckin')}</h2>
+     <span class="badge ${weekHasEsspri?'good':'warn'}">${weekHasEsspri?t('esspriDone'):t('esspriDue')}</span></div>
+     <p class="muted" style="margin:4px 0 10px">${isAr()?'سؤال من ثلاثة أجزاء مرة أسبوعيًا.':'A 3-part self-check, once a week.'}</p>
+     <button class="btn btn-ghost" style="width:100%" onclick="go('esspriForm')">${t('esspriCheckin')}</button>`)
+   +card(`<h2 style="margin-bottom:10px">${t('quickActions')}</h2>
+     <div class="tile-grid">
+       <div class="tile" onclick="go('meds')">${svgIcon('pill',26)}<div>${t('myMeds')}</div></div>
+       <div class="tile" onclick="navTab('reports')">${svgIcon('chart',26)}<div>${t('reports')}</div></div>
+       <div class="tile" onclick="navTab('learn')">${svgIcon('book',26)}<div>${t('learn')}</div></div>
+     </div>`)
+   +`<p class="disc">${t('disclaimer')}</p>`;
+});
+function symptomSummaryMini(e){
+  const rows=[['dryEye',e.dryEye],['dryMouth',e.dryMouth],['jointPain',e.jointPain],['fatigue',e.fatigue]];
+  return `<div class="kpi" style="margin-top:6px">`+rows.map(([k,v])=>
+    `<div class="stat"><div class="num">${v==null?'–':v}</div><div class="lbl">${t(k)}</div></div>`).join('')+`</div>`;
+}
+
+/* ======================= LOG DAILY (track detail) ======================= */
+const TRIGGERS=[['wind','trigWind'],['ac','trigAC'],['screens','trigScreens'],['travel','trigTravel'],['stress','trigStress'],['sleep','trigSleep'],['smoke','trigSmoke'],['alcohol','trigAlcohol']];
+route('logDaily',(n)=>{
+  const e=dailyOn(todayKey())||{dryEye:null,dryMouth:null,jointPain:null,fatigue:null,triggers:[],note:''};
+  const fields=[['dryEye','sDryEye'],['dryMouth','sDryMouth'],['jointPain','sJointPain'],['fatigue','sFatigue']];
+  n.innerHTML=topbarTitle(t('quickLog'))
+   +card(`<div class="scalelabels"><span>${isAr()?'٠ · لا شيء':'0 · None'}</span><span>${isAr()?'١٠ · الأسوأ':'10 · Worst'}</span></div>`)
+   +fields.map(([key,id])=>card(`<div style="font-weight:700;margin-bottom:2px">${t(key)}</div>${scaleSel(id,10,e[key])}`)).join('')
+   +card(`<div style="font-weight:700;margin-bottom:8px">${t('triggersQ')}</div>
+     <div class="chips" id="trigChips">${TRIGGERS.map(([k,lab])=>chip(t(lab),e.triggers.includes(k),`toggleTrigChip('${k}')`)).join('')}</div>
+     <div class="muted" style="margin-top:8px">${t('triggerAssoc')}</div>`)
+   +card(`<div class="field" style="margin:0"><label>${t('noteOptional')}</label><input id="dailyNote" value="${(e.note||'').replace(/"/g,'&quot;')}"></div>`)
+   +`<div id="trigState" style="display:none">${JSON.stringify(e.triggers)}</div>`
+   +`<button class="btn btn-primary" onclick="saveDaily()">${t('save')}</button>`;
+});
+window.toggleTrigChip=(k)=>{const host=document.getElementById('trigState');const arr=JSON.parse(host.textContent);
+  const i=arr.indexOf(k);if(i>=0)arr.splice(i,1);else arr.push(k);host.textContent=JSON.stringify(arr);
+  document.getElementById('trigChips').innerHTML=TRIGGERS.map(([kk,lab])=>chip(t(lab),arr.includes(kk),`toggleTrigChip('${kk}')`)).join('');};
+window.saveDaily=()=>{
+  const vals={dryEye:getScale('sDryEye'),dryMouth:getScale('sDryMouth'),jointPain:getScale('sJointPain'),fatigue:getScale('sFatigue')};
+  const triggers=JSON.parse((document.getElementById('trigState')||{textContent:'[]'}).textContent);
+  const note=(document.getElementById('dailyNote')||{}).value||'';
+  upsertDaily({...vals,triggers,note});toast(t('logged'));navTab('today');
+};
+
+/* ======================= ESSPRI ======================= */
+route('esspriForm',(n)=>{
+  n.innerHTML=topbarTitle(t('esspriCheckin'))
+   +card(`<p class="muted">${t('esspriIntro')}</p>`)
+   +card(`<div class="scalelabels"><span>${isAr()?'٠ · لا شيء':'0 · None'}</span><span>${isAr()?'١٠ · الأسوأ':'10 · Worst'}</span></div>`)
+   +card(`<div style="font-weight:700;margin-bottom:2px">${t('esspriDrynessQ')}</div>${scaleSel('eDry',10,null)}`)
+   +card(`<div style="font-weight:700;margin-bottom:2px">${t('esspriFatigueQ')}</div>${scaleSel('eFat',10,null)}`)
+   +card(`<div style="font-weight:700;margin-bottom:2px">${t('esspriPainQ')}</div>${scaleSel('ePain',10,null)}`)
+   +`<button class="btn btn-primary" onclick="saveEsspri()">${t('save')}</button>`;
+});
+window.saveEsspri=()=>{
+  const dryness=getScale('eDry'),fatigue=getScale('eFat'),pain=getScale('ePain');
+  if(dryness===null||fatigue===null||pain===null){toast(t('pickAll'));return;}
+  addEsspri({dryness,fatigue,pain});toast(t('logged'));navTab('today');
+};
+
+/* ======================= MEDS ======================= */
+route('meds',(n)=>{
+  n.innerHTML=topbarTitle(t('myMeds'))
+   +card(S.meds.length? S.meds.map(m=>`
+     <div class="listitem">
+       <div style="color:var(--accent)">${svgIcon('pill',22)}</div>
+       <div style="flex:1"><div style="font-weight:700">${m.name}</div>
+         <div class="muted">${medTypeLabel(m.type)} · ${L(m.schedule)||''}</div></div>
+       <button class="chip ${medTakenToday(m.id)?'on':''}" onclick="toggleMedTaken('${m.id}');render()">${svgIcon('check',14)} ${t('takenToday')}</button>
+       <button class="btn-icon" onclick="removeMed('${m.id}');render()" aria-label="${t('delete')}">${svgIcon('trash',18)}</button>
+     </div>`).join('') : `<p class="muted">${t('noMeds')}</p>`)
+   +`<button class="btn btn-ghost" style="width:100%;margin-bottom:10px" onclick="openAddMed()">${svgIcon('plus',18)} ${t('addMedBtn')}</button>`
+   +`<p class="disc">${t('medRecordNote')}</p>`;
+});
+function medTypeLabel(ty){return {eyeDrops:t('medTypeEye'),saliva:t('medTypeSaliva'),dmard:t('medTypeDMARD'),other:t('medTypeOther')}[ty]||t('medTypeOther');}
+window.openAddMed=()=>{
+  openSheet(`<h2>${t('addMedBtn')}</h2>
+    <div class="field"><label>${t('medName')}</label><input id="mName" placeholder="${isAr()?'اسم الدواء':'Medication name'}"></div>
+    <div class="field"><label>${t('medType')}</label><select id="mType">
+      <option value="eyeDrops">${t('medTypeEye')}</option><option value="saliva">${t('medTypeSaliva')}</option>
+      <option value="dmard">${t('medTypeDMARD')}</option><option value="other">${t('medTypeOther')}</option></select></div>
+    <div class="field"><label>${t('medSchedule')}</label><input id="mSched" placeholder="${isAr()?'مثل: مرتين يوميًا':'e.g. twice daily'}"></div>
+    <button class="btn btn-primary" onclick="saveMed()">${t('save')}</button>
+    <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="closeSheet()">${t('cancel')}</button>`);
+};
+window.saveMed=()=>{
+  const name=(document.getElementById('mName')||{}).value.trim();
+  if(!name){toast(t('pickAll'));return;}
+  const type=document.getElementById('mType').value;const schedTxt=(document.getElementById('mSched')||{}).value||'';
+  addMed({name,type,schedule:{en:schedTxt,ar:schedTxt}});closeSheet();toast(t('logged'));render();
+};
+
+/* ======================= REPORTS ======================= */
+let REPORT_PERIOD=30;
+route('reports',(n)=>{
+  const days=lastNDays(REPORT_PERIOD);
+  const series=days.map(d=>dailyOn(d));
+  const logged=series.filter(Boolean).length;
+  const pctLogged=Math.round((logged/days.length)*100);
+  n.innerHTML=
+   card(`<h2>${t('reportsTitle')}</h2>
+     <div class="segmented" style="margin-top:8px">
+       <button class="${REPORT_PERIOD===7?'on':''}" onclick="setPeriod(7)">${t('period7')}</button>
+       <button class="${REPORT_PERIOD===30?'on':''}" onclick="setPeriod(30)">${t('period30')}</button>
+       <button class="${REPORT_PERIOD===90?'on':''}" onclick="setPeriod(90)">${t('period90')}</button>
+     </div>`)
+   +card(`<div class="kpi"><div class="stat"><div class="num">${logged}</div><div class="lbl">${t('entriesLogged')}</div></div>
+     <div class="stat"><div class="num">${pctLogged}%</div><div class="lbl">${t('daysLogged')}</div></div></div>`)
+   +(logged? card(`<h2>${t('symptomTrend')}</h2><canvas id="symChart" height="180"></canvas>
+       <div class="muted" style="margin-top:6px">${t('typicalHint')}</div>`)
+     : card(`<p class="muted">${t('noDataYet')}</p>`))
+   +(S.esspriHistory.length? card(`<h2>${t('esspriTrend')}</h2><canvas id="esspriChart" height="160"></canvas>`):'')
+   +card(`<h2>${t('medAdherence')}</h2>${medAdherenceHtml(days)}`)
+   +card(`<h2>${t('buildReport')}</h2><p class="muted">${t('reportHint')}</p>
+     <button class="btn btn-primary" style="margin-top:8px" onclick="buildClinicianReport()">${svgIcon('share',16)} ${t('shareReport')}</button>`);
+  if(logged)drawSymptomChart(days,series);
+  if(S.esspriHistory.length)drawEsspriChart();
+});
+window.setPeriod=(p)=>{REPORT_PERIOD=p;render();};
+function medAdherenceHtml(days){
+  if(!S.meds.length)return `<p class="muted">${t('noMeds')}</p>`;
+  return S.meds.map(m=>{
+    const takenDays=days.filter(d=>S.logs.some(l=>l.type==='medTaken'&&l.medId===m.id&&l.t.slice(0,10)===d)).length;
+    const pct=Math.round((takenDays/days.length)*100);
+    return `<div style="margin-bottom:10px"><div class="row between" style="margin-bottom:4px"><b>${m.name}</b><span class="muted">${pct}%</span></div>
+      <div class="pbar"><i style="width:${pct}%"></i></div></div>`;
+  }).join('');
+}
+function mean(arr){const v=arr.filter(x=>x!=null);if(!v.length)return null;return v.reduce((a,b)=>a+b,0)/v.length;}
+function sd(arr,m){const v=arr.filter(x=>x!=null);if(v.length<2)return 0;const s=v.reduce((a,b)=>a+(b-m)*(b-m),0)/(v.length-1);return Math.sqrt(s);}
+function drawSymptomChart(days,series){
+  const ctx=document.getElementById('symChart');if(!ctx||!window.Chart)return;
+  const mk=(key)=>series.map(e=>e?e[key]:null);
+  const sets=[['dryEye','#2f8fd1'],['dryMouth','#5fd0c0'],['jointPain','#e0a23d'],['fatigue','#d9594a']];
+  new Chart(ctx,{type:'line',data:{labels:days.map(d=>d.slice(5)),
+    datasets:sets.map(([k,c])=>({label:t(k),data:mk(k),borderColor:c,backgroundColor:c,spanGaps:false,tension:.25,pointRadius:2}))},
+    options:{responsive:true,maintainAspectRatio:true,aspectRatio:1.5,
+      scales:{y:{min:0,max:10,ticks:{precision:0,maxTicksLimit:6}},x:{ticks:{maxTicksLimit:7}}},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}}}});
+}
+function drawEsspriChart(){
+  const ctx=document.getElementById('esspriChart');if(!ctx||!window.Chart)return;
+  const hist=[...S.esspriHistory].sort((a,b)=>new Date(a.t)-new Date(b.t));
+  new Chart(ctx,{type:'line',data:{labels:hist.map(h=>h.t.slice(0,10).slice(5)),
+    datasets:[{label:t('esspriScore'),data:hist.map(h=>h.score),borderColor:'#2f8fd1',backgroundColor:'#2f8fd1',tension:.25,pointRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:true,aspectRatio:2,scales:{y:{min:0,max:10,ticks:{precision:0}}}}});
+}
+
+/* --- clinician printable report (no backend; local summary only) --- */
+window.buildClinicianReport=()=>{
+  const days=lastNDays(REPORT_PERIOD);const series=days.map(d=>dailyOn(d));
+  const keys=['dryEye','dryMouth','jointPain','fatigue'];
+  const stats=keys.map(k=>{const vals=series.map(e=>e?e[k]:null);const m=mean(vals);return {k,m,s:sd(vals,m||0)};});
+  const latestEsspri=S.esspriHistory[S.esspriHistory.length-1];
+  const rows=stats.map(s=>`<tr><td>${t(s.k)}</td><td>${s.m==null?'–':s.m.toFixed(1)}</td><td>${s.m==null?'–':'±'+s.s.toFixed(1)}</td></tr>`).join('');
+  const medRows=S.meds.map(m=>`<tr><td>${m.name}</td><td>${medTypeLabel(m.type)}</td><td>${L(m.schedule)||''}</td></tr>`).join('')
+    || `<tr><td colspan="3">${t('noMeds')}</td></tr>`;
+  const title=isAr()?'ملخّص ندى لمتابعة متلازمة شوغرن':'Nada Sjögren\'s summary';
+  const html=`<!doctype html><html lang="${isAr()?'ar':'en'}" dir="${isAr()?'rtl':'ltr'}"><head><meta charset="utf-8">
+  <title>${title}</title><style>
+  body{font-family:-apple-system,Arial,sans-serif;color:#15222c;max-width:720px;margin:24px auto;padding:0 16px}
+  h1{font-size:20px}h2{font-size:15px;margin-top:22px;border-bottom:1px solid #dce8ef;padding-bottom:4px}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+  td,th{padding:6px 8px;border-bottom:1px solid #eef3f6;text-align:${isAr()?'right':'left'}}
+  .disc{font-size:11px;color:#5b7183;margin-top:26px;line-height:1.6;border-top:1px solid #dce8ef;padding-top:10px}
+  .muted{color:#5b7183;font-size:12px}
+  @media print{button{display:none}}
+  </style></head><body>
+  <h1>${title}</h1>
+  <div class="muted">${isAr()?'تاريخ الإنشاء':'Generated'}: ${new Date().toLocaleDateString()} · ${isAr()?'النطاق':'Range'}: ${t('period'+REPORT_PERIOD)}</div>
+  <h2>${t('symptomTrend')} (${t('typicalRange')})</h2>
+  <table><tr><th>${isAr()?'العرض':'Symptom'}</th><th>${isAr()?'المتوسط':'Mean'}</th><th>${isAr()?'الانحراف المعياري':'SD'}</th></tr>${rows}</table>
+  ${latestEsspri?`<h2>${t('esspriScore')}</h2><table><tr><th>${isAr()?'الجفاف':'Dryness'}</th><th>${isAr()?'التعب':'Fatigue'}</th><th>${isAr()?'الألم':'Pain'}</th><th>${isAr()?'المجموع':'Score'}</th></tr>
+  <tr><td>${latestEsspri.dryness}</td><td>${latestEsspri.fatigue}</td><td>${latestEsspri.pain}</td><td><b>${latestEsspri.score}</b></td></tr></table>`:''}
+  <h2>${t('myMeds')}</h2><table><tr><th>${t('medName')}</th><th>${t('medType')}</th><th>${t('medSchedule')}</th></tr>${medRows}</table>
+  <div class="disc"><b>${t('disclaimerTitle')}:</b> ${t('disclaimer')}</div>
+  <button onclick="window.print()" style="margin-top:20px;padding:10px 18px;border:0;border-radius:8px;background:#2f8fd1;color:#fff;font-weight:700;cursor:pointer">${isAr()?'طباعة / حفظ PDF':'Print / Save as PDF'}</button>
+  </body></html>`;
+  const w=window.open('','_blank');
+  if(w){w.document.write(html);w.document.close();}
+  else{const blob=new Blob([html],{type:'text/html'});const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download='nada-report.html';a.click();}
+};
+
+/* ======================= LEARN ======================= */
+const ARTICLES=[['art1T','art1B'],['art2T','art2B'],['art3T','art3B'],['art4T','art4B'],['art5T','art5B'],['art6T','art6B']];
+route('learn',(n)=>{
+  n.innerHTML=card(`<h2>${t('learnTitle')}</h2><p class="muted">${isAr()?'محتوى تثقيفي عام — ليس بديلًا عن رعاية فريقك الطبي.':'General education — not a substitute for your care team.'}</p>`)
+   +card(`<div class="accordion">${ARTICLES.map(([ti,bo],i)=>`
+     <details ${i===0?'open':''}><summary>${t(ti)}</summary><p>${t(bo)}</p></details>
+     ${i<ARTICLES.length-1?'<hr style="border:0;border-top:1px solid var(--line);margin:6px 0">':''}`).join('')}</div>`)
+   +`<p class="disc">${t('disclaimer')}</p>`;
+});
+
+/* ======================= MORE / SETTINGS ======================= */
+route('more',(n)=>{
+  n.innerHTML=card(`<h2>${t('settings')}</h2>
+      <div class="field"><label>${t('language')}</label>
+        <div class="segmented"><button class="${S.lang==='en'?'on':''}" onclick="S.lang='en';save();render()">English</button>
+        <button class="${S.lang==='ar'?'on':''}" onclick="S.lang='ar';save();render()">العربية</button></div></div>
+      <div class="field" style="margin-bottom:0"><label>${t('theme')}</label>
+        <div class="chips">
+          ${themeChip('dark','themeDark')}${themeChip('light','themeLight')}${themeChip('mint','themeMint')}${themeChip('lavender','themeLavender')}
+        </div></div>`)
+   +card(`<h2>${t('dataMgmt')}</h2>
+      <button class="btn btn-ghost" style="width:100%;margin-bottom:8px" onclick="exportData()">${svgIcon('download',16)} ${t('exportData')}</button>
+      <label class="btn btn-ghost" style="width:100%;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer">
+        ${svgIcon('upload',16)} ${t('importData')}<input type="file" accept="application/json" style="display:none" onchange="importData(event)"></label>
+      <button class="btn btn-ghost" style="width:100%;color:var(--bad);border-color:var(--bad)" onclick="clearData()">${svgIcon('trash',16)} ${t('clearData')}</button>`)
+   +card(`<h2>${t('about')}</h2><p class="muted">${t('aboutBody')}</p>
+      <div class="muted" style="margin-top:10px">${t('version')}</div>`)
+   +`<p class="disc"><b>${t('disclaimerTitle')}:</b> ${t('disclaimer')}</p>`;
+});
+function themeChip(key,labelKey){return `<button type="button" class="chip ${S.theme===key?'on':''}" onclick="setTheme('${key}')">${t(labelKey)}</button>`;}
+window.exportData=()=>{
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='nada-data.json';a.click();
+};
+window.importData=(ev)=>{
+  const f=ev.target.files&&ev.target.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=()=>{try{const v=JSON.parse(reader.result);S=Object.assign(blank(),v);save();toast(t('logged'));render();}catch(e){toast('Error');}};
+  reader.readAsText(f);
+};
+window.clearData=()=>{if(confirm(t('clearConfirm'))){localStorage.removeItem(KEY);S=blank();S.onboarded=false;save();render();}};
+
+/* ---------------- boot ---------------- */
+render();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+</body>
+</html>

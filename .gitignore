@@ -1,0 +1,6 @@
+node_modules/
+.vercel
+qa*.mjs
+qa-*.png
+package.json
+package-lock.json

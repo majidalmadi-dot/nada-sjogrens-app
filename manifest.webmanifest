@@ -1,0 +1,17 @@
+{
+  "name": "Nada — Sjögren's Companion",
+  "short_name": "Nada",
+  "description": "A bilingual (Arabic/English), non-medical companion for people living with Sjögren's syndrome.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b1620",
+  "theme_color": "#2f8fd1",
+  "orientation": "portrait",
+  "lang": "en",
+  "dir": "auto",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

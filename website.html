@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nada · ندى — A companion for Sjögren's syndrome</title>
+<meta name="description" content="Nada is a free, bilingual (Arabic/English), non-medical companion app for people living with Sjögren's syndrome. Track dryness symptoms, log medications, learn, and share a summary with your care team.">
+<style>
+  :root{--bg:#0b1620;--card:#121f2b;--line:#223344;--txt:#eaf2f8;--muted:#8fa6ba;--accent:#2f8fd1}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,"Segoe UI",Arial,sans-serif}
+  .wrap{max-width:1000px;margin:0 auto;padding:28px 20px}
+  header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  header svg{color:var(--accent)}
+  h1{font-size:28px;margin:18px 0 6px}
+  p.lead{color:var(--muted);font-size:16px;max-width:560px;line-height:1.6}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;margin-top:20px}
+  .phone{border:1px solid var(--line);border-radius:26px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);max-width:380px;margin:0 auto}
+  iframe{width:100%;height:760px;border:0;display:block;background:var(--bg)}
+  .features{list-style:none;padding:0;margin:18px 0;display:grid;gap:12px}
+  .features li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--muted)}
+  .features b{color:var(--txt)}
+  .disc{font-size:12px;color:var(--muted);line-height:1.6;border-top:1px solid var(--line);margin-top:30px;padding-top:16px}
+  @media (max-width:760px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2c3.5 5 7 8.5 7 13a7 7 0 1 1-14 0c0-4.5 3.5-8 7-13z" fill="currentColor" opacity=".9"/></svg>
+    <b>Nada · ندى</b>
+  </header>
+  <div class="grid">
+    <div>
+      <h1>A gentle companion for Sjögren's syndrome</h1>
+      <p class="lead">Nada (ندى — Arabic for "dew") is a free, bilingual Arabic/English app that helps you track dryness,
+        fatigue and joint-pain symptoms, log your medications, learn, and prepare a summary for your care-team visits —
+        all stored privately on your own device.</p>
+      <ul class="features">
+        <li><b>Daily symptom tracker</b> — dry eyes, dry mouth, joint pain, and fatigue on a simple 0–10 scale.</li>
+        <li><b>Weekly ESSPRI check-in</b> — the validated 3-item patient-reported index used in Sjögren's care.</li>
+        <li><b>Medication log</b> — record what you take and when, with no dosing suggestions.</li>
+        <li><b>Education library</b> — bilingual, plain-language articles on dryness care and when to seek urgent care.</li>
+        <li><b>Clinician summary</b> — a printable report you can bring to your appointment.</li>
+        <li><b>Private by design</b> — your data stays on your device unless you choose to export or print it.</li>
+      </ul>
+      <p class="disc">Nada is an educational companion. It does not diagnose, predict flares, or recommend treatment or medication doses.
+        Always discuss symptoms, test results, and treatment decisions with your care team.</p>
+    </div>
+    <div class="phone"><iframe src="./index.html" title="Nada app preview"></iframe></div>
+  </div>
+</div>
+</body>
+</html>
